@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prawda czy wyzwanie</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Prawda lub Wyzwanie</h1>
+
+    <h3>Wprowadź imiona lub nicki graczy (oddzielone przecinkami)</h3>
+    <input id="players" placeholder="np. Anna, Bartek, Karol" />
+
+    <button id="prawdaBtn">Prawda</button>
+    <button id="wyzwanieBtn">Wyzwanie</button>
+
+    <div id="question" style="display: none"></div>
+
+    <script>
+      // Pula pytań, wyzwań i kar
+      const questions = [
+        "Jaką rzecz chciałbyś/-abyś w sobie najbardziej zmienić?",
+        "Komu w pokoju szczerze zazdrościsz stylu?",
+        "Jak wyglądał Twój najbardziej szalony pocałunek?",
+        "Komu chciałbyś/-abyś się wyżalić?",
+        "Jak sobie wyobrażasz idealny związek?",
+        "Komu w pokoju ufasz najbardziej?",
+        "Jakiej wpadki się najbardziej wstydzisz?",
+        "Komu w pokoju mógłbyś/-abyś oddać swoje rzeczy?",
+        "Jak wyglądał Twój pierwszy „crush”?",
+        "Komu się zwierzasz, gdy jest źle?",
+        "Jak sobie wyobrażasz swoje wymarzone urodziny?",
+        "Komu w pokoju najbardziej się podobasz, według Ciebie?",
+        "Jak wyglądał Twój najbardziej szalony zakład?",
+        "Komu w pokoju się podlizujesz?",
+        "Jak sobie wyobrażasz idealny pocałunek?",
+        "Jaki jest Twój największy lęk w nocy?",
+        "Komu w pokoju zazdrościsz popularności?",
+        "Jak sobie wyobrażasz wymarzone zaręczyny?",
+        "Jak wyglądał Twój najbardziej szalony wypad?",
+        "Komu w pokoju nie ufasz?",
+        "O kim najczęściej myślisz?",
+        "Jak wygląda Twój największy sekret?",
+        "Komu w pokoju najbardziej ufasz w sprawach serca?",
+        "Jak sobie wyobrażasz swoje wymarzone wakacje?",
+        "Jak wygląda Twój największy wstyd w szkole?",
+        "Komu w pokoju chciałbyś/-abyś się wypłakać?",
+        "Jak sobie wyobrażasz idealny weekend we dwoje?",
+        "Komu w pokoju szczerze zazdrościsz sukcesu?",
+        "Jak wygląda Twój najbardziej szalony wypad ze znajomymi?",
+        "Komu w pokoju opowiadasz swoje marzenia?",
+        "Komu w pokoju najbardziej ufasz w sprawach osobistych?",
+        "Komu w pokoju się podobasz, a sobie tego nie uświadamiasz?",
+        "Jak wygląda Twój plan na przyszłość?",
+        "Komu w pokoju najbardziej ufasz w sytuacjach kryzysowych?",
+        "Jak sobie wyobrażasz wymarzony dom?",
+        "Komu w pokoju mógłbyś/-abyś oddać wszystkie swoje pieniądze?",
+        "Kto ci się najbardziej podoba w pomieszczeniu",
+        "Jak wyglądał Twój pierwszy pocałunek?",
+        "Jakiego SMS-a się wstydzisz?",
+        "Jakiej rzeczy najbardziej się boisz?",
+        "Kogo w pokoju uważasz za najbardziej szalonego?",
+        "Jakiej wiadomości w telefonie wolałbyś/-aby nikt nie czytał?",
+        "Komu byś się oświadczył/-a, gdyby był koniec świata?",
+        "Jakiej rzeczy szczerze sobie zazdrościsz?",
+        "Jak wyglądał Twój najbardziej żenujący upadek?",
+        "Jakiej piosenki słuchasz, gdy nikt nie patrzy?",
+        "Jak się nazywa osoba, w której się podkochiwałeś/-aś w szkole?",
+        "Jak wyglądał Twój pierwszy raz na wagarach?",
+        "Jakiej rzeczy nauczyłeś/-aś się w szkole, która się całkiem przydała?",
+        "Jak się nazywa osoba, którą pocałowałbyś/-abyś na wyzwanie?",
+        "Jak często kłamiesz?",
+        "Jak wyglądał Twój najbardziej szalony sen?",
+        "Czego się boisz, że inni o Tobie pomyślą?",
+        "Komu w pokoju dałbyś/-abyś szansę na randkę?",
+        "Jakiej rzeczy w sobie najbardziej się wstydzisz?",
+        "Czego się nauczyłeś/-aś od kogoś w pokoju?",
+        "Jak wygląda Twój największy „cringe” w mediach społecznościowych?",
+        "Jak sobie wyobrażasz idealny weekend?",
+        "Jakiego słowa nadużywasz?",
+        "Jak wygląda osoba, którą się pierwszy raz zauroczyłeś/-aś?",
+        "Jak sobie radzisz ze stresem?",
+        "Komu w pokoju pomogłbyś/-abyś w pierwszej kolejności?",
+        "Jak wygląda Twój najbardziej szalony pomysł?",
+        "Jak sobie wyobrażasz swoje życie za 10 lat?",
+        "Jakiej rzeczy się najbardziej brzydzisz?",
+        "Komu w pokoju najbardziej ufasz, by dotrzymał tajemnicy?",
+        "Jak sobie wyobrażasz wymarzone wakacje?",
+        "Jak sobie radzisz, gdy jesteś smutny/-a?",
+        "Komu w pokoju pomógłbyś/-abyś w kłopotach?",
+        "Komu w pokoju się zwierzyłeś/-aś w największym sekrecie?",
+        "Jak wyglądał Twój najlepszy żart?",
+        "Komu w pokoju szczerze zazdrościsz odwagi?",
+        "Komu w pokoju najbardziej ufasz, gdy chodzi o swoje troski?",
+        "Jak wygląda Twój najbardziej szalony wyczyn?",
+        "Komu w pokoju się zwierzasz, gdy się pokłócisz?",
+        "Jak sobie wyobrażasz idealny pierwszy wyjazd we dwoje?",
+        "Komu w pokoju szczerze zazdrościsz talentu?",
+        "Jak wygląda Twój najbardziej szalony pomysł na zarobienie pieniędzy?",
+        "Komu w pokoju ufasz najbardziej w sprawach szpitalnych?",
+        "Komu w pokoju szczerze zazdrościsz luzu?",
+        "Jak wygląda Twój najbardziej szalony wyczyn na imprezie?",
+        "Komu w pokoju ufasz w 100%?",
+        "Jak sobie wyobrażasz wymarzony pokój w swoim przyszłym domu?",
+        "Komu w pokoju ufasz w sprawach intymnych?",
+        "Komu w pokoju szczerze zazdrościsz urody?",
+        "Komu w pokoju szczerze zazdrościsz kreatywności?",
+        "Komu w pokoju ufasz w sytuacjach awaryjnych?",
+        "Komu w pokoju szczerze zazdrościsz energii?",
+        "Jak wygląda Twój najbardziej szalony wypad na zakupy?",
+        "Komu w pokoju ufasz w sprawach rodzinnych?",
+        "Komu w pokoju szczerze zazdrościsz pewności siebie?",
+        "Jak wygląda Twój najbardziej szalony wyjazd na wakacje?",
+        "Komu w pokoju ufasz w sprawach finansowych?",
+        "Komu w pokoju ufasz w sprawach szkoły lub pracy?",
+        "Jak wygląda Twój najbardziej szalony pomysł na urodziny?",
+        "Jak wygląda Twój najbardziej szalony wypadek?",
+        "Komu w pokoju szczerze zazdrościsz mocnego charakteru?",
+        "Komu w pokoju ufasz w sprawach mocno osobistych?",
+      ];
+
+      const challenges = [
+        "Zrób 10 przysiadów wraz z osobą po twojej lewej.",
+        "Przez 30 sekund mów jak osoba mocno zmęczona.",
+        "Narysuj na kartce swoje ulubione zwierzę.",
+        "Zaśpiewaj refren piosenki w języku, którego się uczysz.",
+        "Zrób 15 pompek przy ścianie.",
+        "Przez 30 sekund naśladuj dźwięki dżungli.",
+        "Zrób sobie fryzurę rękami.",
+        "Przez 1 minutę mów jak komentator sportowy.",
+        "Zrób „jaskółkę” i utrzymaj się 10 sekund.",
+        "Przez 30 sekund naśladuj chód wybranej osoby.",
+        "Narysuj portret kogoś, mając zamknięte oczy.",
+        "Zrób 10 skłonów w przód.",
+        "Przez 1 minutę mów jak osoba starsza.",
+        "Zaśpiewaj piosenkę w języku wymyślonym.",
+        "Zrób mostek i utrzymaj 5 sekund.",
+        "Przez 30 sekund mów jak szeryf na Dzikim Zachodzie.",
+        "Narysuj swoje ulubione danie.",
+        "Zrób 20 przysiadów sumo.",
+        "Przez 30 sekund mów jak osoba z innej planety.",
+        "Zaśpiewaj piosenkę używając tylko „la-la-la”.",
+        "Zrób szpagat albo próbę szpagatu.",
+        "Przez 1 minutę mów jak nauczyciel w szkole.",
+        "Narysuj wymyśloną postać z gry czy filmu.",
+        "Zrób 10 wymachów nogami do tyłu.",
+        "Przez 30 sekund mów szeptem.",
+        "Zaśpiewaj piosenkę o swoim pokoju.",
+        "Zrób sobie „makijaż” używając tylko palców.",
+        "Przez 30 sekund mów jak osoba wściekła.",
+        "Narysuj swoje wymarzone wakacje.",
+        "Zrób 10 pompek na kolanach.",
+        "Przez 30 sekund mów jak osoba mocno zdezorientowana.",
+        "Zaśpiewaj piosenkę w języku zwierząt (np. „miau”)!",
+        "Zrób przysiad, wyskok i klaśnij.",
+        "Przez 30 sekund mów jak osoba rozmarzona.",
+        "Narysuj wymyśloną wersję siebie w przyszłości.",
+        "Zrób 10 wykroków na każdą nogę.",
+        "Przez 30 sekund mów jak osoba znudzona.",
+        "Zaśpiewaj piosenkę tak, jakby była kołysanką.",
+        "Zrób 5 pompek a osoba na przeciwko ciebie trzyma ci nogi w powietrzu.",
+        "Przez 30 sekund mów jak osoba podekscytowana.",
+        "Narysuj logo firmy.",
+        "Zrób 10 brzuszków.",
+        "Przez 30 sekund mów jak osoba zawstydzona.",
+        "Zaśpiewaj piosenkę w wersji country.",
+        "Zrób 10 przysiadów, trzymając się kogoś za ręce.",
+        "Przez 30 sekund mów jak osoba w szoku.",
+        "Narysuj siebie w stroju superbohatera.",
+        "Zrób 10 wymachów rękami w górę i w dół.",
+        "Zaśpiewaj piosenkę o swoim ulubionym kolorze.",
+        "Zrób 20 przysiadów.",
+        "Narysuj karykaturę osoby po prawej stronie.",
+        "Zaśpiewaj piosenkę o sobie.",
+        "Stań na rękach (przy ścianie) na 10 sekund.",
+        "Opowiedz żart, którym rozśmieszysz wszystkich.",
+        "Zaśpiewaj ulubiony refren, szepcząc.",
+        "Przez 30 sekund mów samymi samogłoskami.",
+        "Narysuj portret osoby po lewej.",
+        "Przez 1 minutę mów używając tylko rymów.",
+        "Zrób sobie wąsy z kartki.",
+        "Zaśpiewaj piosenkę dziecięcym głosem.",
+        "Stań tyłem do grupy i spróbuj rozpoznać osoby po głosie. | W razie niezgadnięcia pijesz shota",
+        "Napisz w powietrzu swoje imię biodrami.",
+        "Zrób 10 przysiadów z osobą na plecach (Można sobie wybrać).",
+        "Powiedz językołamacz 5 razy szybko.",
+        "Narysuj na kartce rzecz, o jakiej pomyślisz w 5 sekund.",
+        "Skacz na jednej nodze 30 razy.",
+        "Zrób sobie „selfie” ze smutną miną.",
+        "Przez 30 sekund mów tylko szeptem.",
+        "Uśmiechnij się najszerzej jak potrafisz.",
+        "Zrób „żółwika” (żółw z rąk) z osobą obok.",
+        "Zrób 5 przysiadów… tyłem!",
+        "Napisz swoje imię od tyłu.",
+        "Przez 1 minutę zachowuj się jak gej.",
+        "Przez 30 sekund naśladuj ruchy kogoś z grupy.",
+        "Zaśpiewaj piosenkę w języku, którym się nie posługujesz.",
+        "Narysuj wymyśloną mapę skarbów.",
+        "Naśladuj swojego ulubionego superbohatera.",
+        "Przez 30 sekund mów tylko używając litery „p”.",
+        "Stań na jednej nodze, zamknij oczy i policz do 10.",
+        "Zaśpiewaj piosenkę dziecięcą w wersji heavy metal.",
+        "Zrób 10 brzuszków.",
+        "Narysuj na kartce karykaturę kogoś z pokoju.",
+        "Zrób sobie „koronę” z papieru.",
+        "Zrób 1 przysiadów na jednej nodze.",
+        "Zaśpiewaj piosenkę o warzywach.",
+        "Przez 30 sekund mów jak szpieg.",
+        "Zrób przewrót w przód.",
+        "Narysuj w 30 sekund portret osoby po prawej.",
+        "Przez 1 minutę mów tylko używając słów na „s”.",
+        "Zrób 20 wymachów rękami.",
+        "Zaśpiewaj piosenkę… od tyłu!",
+        "Zrób 20 pajacyków bez przerwy.",
+        "Opowiedz krótką, zabawną historię z życia.",
+        "Zaśpiewaj piosenkę z reklamy.",
+        "Naśladuj przez minutę zwierzę wybrane przez grupę.",
+        "Napisz i wyrecytuj krótkie wierszyki o osobie po lewej.",
+        "Zrób śmieszną minę i utrzymaj ją przez 1 minuty.",
+        "Przez minutę mów jak postać z bajki.",
+        "Wstań i wykonaj taniec robotów przez 1 minutę.",
+        "Wypij łyk wody z kubka bez używania rąk.",
+        "Zaśpiewaj fragment piosenki wybranej przez grupę.",
+        "Wykonaj 15 skoków w miejscu.",
+        "Zaśpiewaj jak najgłośniej refren ulubionej piosenki.",
+        "Naśladuj dźwięk zwierzęcia przez 30 sekund.",
+        "Zrób 20 sekund przerwy i medytuj z zamkniętymi oczami.",
+        "Wstań i zrób zabawny taniec przez 30 sekund.",
+        "Zaśpiewaj fragment piosenki w obcym języku.",
+        "Zrób 10 pompek z klaśnięciem.",
+        "Napisz krótkie „przeprosiny” do osoby wybranej przez grupę.",
+        "Zrób minę zdziwioną i utrzymaj ją przez minutę.",
+        "Zaśpiewaj „Sto lat” z pełnym zaangażowaniem.",
+        "Wykonaj 5 skłonów do ziemi.",
+        "Narysuj swoją wymarzoną wakacyjną destynację i pokaż grupie.",
+        "Wstań i podskocz 20 razy.",
+        "Powiedz głośno swoje ulubione powiedzenie.",
+        "Zrób 1 minutową przerwę na śmianie się – śmiej się bez powodu!",
+        "Zaśpiewaj piosenkę z filmu Disney’a.",
+        "Naśladuj kogoś z grupy przez minutę.",
+        "Zrób minę złości i utrzymaj ją przez 30 sekund.",
+        "Wstań i zatańcz „macarenę” przez minutę.",
+        "Napisz krótki list miłosny do wybranej osoby przez grupę.",
+        "Zaśpiewaj na głos ulubioną piosenkę z dzieciństwa.",
+        "Zrób 10 skoków z przysiadu.",
+        "Narysuj na kartce swoją ulubioną postać z bajki.",
+        "Zrób 20 sekundowy taniec „freestyle”.",
+      ];
+
+      const penalties = [
+        "Zjedz kawałek cytryny!",
+        "Zrób 20 pompek!",
+        "Umyj wszystkie szklanki!",
+        "Posprzątaj pokój w 5 minut!",
+      ];
+
+      // Funkcja losująca, która unika powtórzeń
+      function getRandom(arr, last) {
+        if (arr.length <= 1) return arr[0];
+        let item;
+        do {
+          item = arr[Math.floor(Math.random() * arr.length)];
+        } while (item === last);
+        return item;
+      }
+
+      // Funkcja losująca osobę
+      function getRandomPlayer() {
+        const players = document.getElementById("players").value.split(",");
+        const cleaned = players
+          .map((el) => el.trim())
+          .filter((el) => el.length > 0);
+        if (cleaned.length > 0) {
+          return getRandom(cleaned, lastPlayer);
+        }
+        return "Nie podano graczy.";
+      }
+
+      let lastQuestion = null;
+      let lastChallenge = null;
+      let lastPenalty = null;
+      let lastPlayer = null;
+
+      document.getElementById("prawdaBtn").addEventListener("click", () => {
+        const question = getRandom(questions, lastQuestion);
+        lastQuestion = question;
+
+        const penalty = getRandom(penalties, lastPenalty);
+        lastPenalty = penalty;
+
+        const player = getRandomPlayer();
+
+        lastPlayer = player;
+
+        document.getElementById("question").innerHTML = `
+                    <strong>Prawda</strong> (dla: ${player}): ${question} <br>
+                    <em>Kara za nieodpowiedzenie to:</em> ${penalty}
+                `;
+        document.getElementById("question").style.display = "block";
+      });
+
+      document.getElementById("wyzwanieBtn").addEventListener("click", () => {
+        const challenge = getRandom(challenges, lastChallenge);
+        lastChallenge = challenge;
+
+        const penalty = getRandom(penalties, lastPenalty);
+        lastPenalty = penalty;
+
+        const player = getRandomPlayer();
+
+        lastPlayer = player;
+
+        document.getElementById("question").innerHTML = `
+                    <strong>Wyzwanie</strong> (dla: ${player}): ${challenge} <br>
+                    <em>Kara za niewykonanie wyzwania to:</em> ${penalty}
+                `;
+        document.getElementById("question").style.display = "block";
+      });
+      let pytania = questions.length;
+      let wyzwania = challenges.length;
+    </script>
+  </body>
+</html>
