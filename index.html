@@ -2,323 +2,376 @@
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Prawda czy wyzwanie</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Prawda lub Wyzwanie</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <h1>Prawda lub Wyzwanie</h1>
+    <p>Wprowadź imiona graczy:</p>
+    <input id="players" placeholder="Np: Anna Bartek Michał" />
 
-    <h3>Wprowadź imiona lub nicki graczy (oddzielone przecinkami)</h3>
-    <input id="players" placeholder="np. Anna, Bartek, Karol" />
-
-    <button id="prawdaBtn">Prawda</button>
-    <button id="wyzwanieBtn">Wyzwanie</button>
+    <!-- <button onclick="showRules()">Zasady</button> -->
+    <button onclick="drawPlayer()">Losuj osobę</button>
+    <button onclick="askTruth()">Prawda</button>
+    <button onclick="askChallenge()">Wyzwanie</button>
 
     <div id="question" style="display: none"></div>
 
     <script>
-      // Pula pytań, wyzwań i kar
       const questions = [
-        "Jaką rzecz chciałbyś/-abyś w sobie najbardziej zmienić?",
-        "Komu w pokoju szczerze zazdrościsz stylu?",
-        "Jak wyglądał Twój najbardziej szalony pocałunek?",
-        "Komu chciałbyś/-abyś się wyżalić?",
-        "Jak sobie wyobrażasz idealny związek?",
-        "Komu w pokoju ufasz najbardziej?",
-        "Jakiej wpadki się najbardziej wstydzisz?",
-        "Komu w pokoju mógłbyś/-abyś oddać swoje rzeczy?",
-        "Jak wyglądał Twój pierwszy „crush”?",
-        "Komu się zwierzasz, gdy jest źle?",
-        "Jak sobie wyobrażasz swoje wymarzone urodziny?",
-        "Komu w pokoju najbardziej się podobasz, według Ciebie?",
-        "Jak wyglądał Twój najbardziej szalony zakład?",
-        "Komu w pokoju się podlizujesz?",
-        "Jak sobie wyobrażasz idealny pocałunek?",
-        "Jaki jest Twój największy lęk w nocy?",
-        "Komu w pokoju zazdrościsz popularności?",
-        "Jak sobie wyobrażasz wymarzone zaręczyny?",
-        "Jak wyglądał Twój najbardziej szalony wypad?",
-        "Komu w pokoju nie ufasz?",
-        "O kim najczęściej myślisz?",
-        "Jak wygląda Twój największy sekret?",
-        "Komu w pokoju najbardziej ufasz w sprawach serca?",
-        "Jak sobie wyobrażasz swoje wymarzone wakacje?",
-        "Jak wygląda Twój największy wstyd w szkole?",
-        "Komu w pokoju chciałbyś/-abyś się wypłakać?",
-        "Jak sobie wyobrażasz idealny weekend we dwoje?",
-        "Komu w pokoju szczerze zazdrościsz sukcesu?",
-        "Jak wygląda Twój najbardziej szalony wypad ze znajomymi?",
-        "Komu w pokoju opowiadasz swoje marzenia?",
-        "Komu w pokoju najbardziej ufasz w sprawach osobistych?",
-        "Komu w pokoju się podobasz, a sobie tego nie uświadamiasz?",
-        "Jak wygląda Twój plan na przyszłość?",
-        "Komu w pokoju najbardziej ufasz w sytuacjach kryzysowych?",
-        "Jak sobie wyobrażasz wymarzony dom?",
-        "Komu w pokoju mógłbyś/-abyś oddać wszystkie swoje pieniądze?",
-        "Kto ci się najbardziej podoba w pomieszczeniu",
-        "Jak wyglądał Twój pierwszy pocałunek?",
-        "Jakiego SMS-a się wstydzisz?",
-        "Jakiej rzeczy najbardziej się boisz?",
-        "Kogo w pokoju uważasz za najbardziej szalonego?",
-        "Jakiej wiadomości w telefonie wolałbyś/-aby nikt nie czytał?",
-        "Komu byś się oświadczył/-a, gdyby był koniec świata?",
-        "Jakiej rzeczy szczerze sobie zazdrościsz?",
-        "Jak wyglądał Twój najbardziej żenujący upadek?",
-        "Jakiej piosenki słuchasz, gdy nikt nie patrzy?",
-        "Jak się nazywa osoba, w której się podkochiwałeś/-aś w szkole?",
-        "Jak wyglądał Twój pierwszy raz na wagarach?",
-        "Jakiej rzeczy nauczyłeś/-aś się w szkole, która się całkiem przydała?",
-        "Jak się nazywa osoba, którą pocałowałbyś/-abyś na wyzwanie?",
-        "Jak często kłamiesz?",
-        "Jak wyglądał Twój najbardziej szalony sen?",
-        "Czego się boisz, że inni o Tobie pomyślą?",
-        "Komu w pokoju dałbyś/-abyś szansę na randkę?",
-        "Jakiej rzeczy w sobie najbardziej się wstydzisz?",
-        "Czego się nauczyłeś/-aś od kogoś w pokoju?",
-        "Jak wygląda Twój największy „cringe” w mediach społecznościowych?",
-        "Jak sobie wyobrażasz idealny weekend?",
-        "Jakiego słowa nadużywasz?",
-        "Jak wygląda osoba, którą się pierwszy raz zauroczyłeś/-aś?",
-        "Jak sobie radzisz ze stresem?",
-        "Komu w pokoju pomogłbyś/-abyś w pierwszej kolejności?",
-        "Jak wygląda Twój najbardziej szalony pomysł?",
-        "Jak sobie wyobrażasz swoje życie za 10 lat?",
-        "Jakiej rzeczy się najbardziej brzydzisz?",
-        "Komu w pokoju najbardziej ufasz, by dotrzymał tajemnicy?",
-        "Jak sobie wyobrażasz wymarzone wakacje?",
-        "Jak sobie radzisz, gdy jesteś smutny/-a?",
-        "Komu w pokoju pomógłbyś/-abyś w kłopotach?",
-        "Komu w pokoju się zwierzyłeś/-aś w największym sekrecie?",
-        "Jak wyglądał Twój najlepszy żart?",
-        "Komu w pokoju szczerze zazdrościsz odwagi?",
-        "Komu w pokoju najbardziej ufasz, gdy chodzi o swoje troski?",
-        "Jak wygląda Twój najbardziej szalony wyczyn?",
-        "Komu w pokoju się zwierzasz, gdy się pokłócisz?",
-        "Jak sobie wyobrażasz idealny pierwszy wyjazd we dwoje?",
-        "Komu w pokoju szczerze zazdrościsz talentu?",
-        "Jak wygląda Twój najbardziej szalony pomysł na zarobienie pieniędzy?",
-        "Komu w pokoju ufasz najbardziej w sprawach szpitalnych?",
-        "Komu w pokoju szczerze zazdrościsz luzu?",
-        "Jak wygląda Twój najbardziej szalony wyczyn na imprezie?",
-        "Komu w pokoju ufasz w 100%?",
-        "Jak sobie wyobrażasz wymarzony pokój w swoim przyszłym domu?",
-        "Komu w pokoju ufasz w sprawach intymnych?",
-        "Komu w pokoju szczerze zazdrościsz urody?",
-        "Komu w pokoju szczerze zazdrościsz kreatywności?",
-        "Komu w pokoju ufasz w sytuacjach awaryjnych?",
-        "Komu w pokoju szczerze zazdrościsz energii?",
-        "Jak wygląda Twój najbardziej szalony wypad na zakupy?",
-        "Komu w pokoju ufasz w sprawach rodzinnych?",
-        "Komu w pokoju szczerze zazdrościsz pewności siebie?",
-        "Jak wygląda Twój najbardziej szalony wyjazd na wakacje?",
-        "Komu w pokoju ufasz w sprawach finansowych?",
-        "Komu w pokoju ufasz w sprawach szkoły lub pracy?",
-        "Jak wygląda Twój najbardziej szalony pomysł na urodziny?",
-        "Jak wygląda Twój najbardziej szalony wypadek?",
-        "Komu w pokoju szczerze zazdrościsz mocnego charakteru?",
-        "Komu w pokoju ufasz w sprawach mocno osobistych?",
+        "Czy powiedziałeś(-łaś) kiedyś coś złego na temat kogoś w tym pokoju?",
+        "Czy ukradłeś(-łaś) coś kiedyś ze szkoły lub z pracy?",
+        "Gdybyś jeszcze raz się urodził(a), kim byś był(a)?",
+        "Która z obecnych tu osób miałaby największy problem z dochowaniem tajemnicy?",
+        "Przez jak długi czas udało ci się wytrzymać bez mycia?",
+        "Jaka była najbardziej kłopotliwa sytuacja, która przytrafiła ci się w miejscu publicznym?",
+        "Czy pływałeś(-łaś) kiedyś na golasa?",
+        "Czy rozniosłeś(-łaś) kiedyś plotkę na czyjś temat?",
+        "Czy wziąłeś(-łaś) kiedyś narkotyki? Jeśli tak, opowiedz o swoim doświadczeniu.",
+        "Gdybyś musiał(a) wybrać rozum albo urodę, co byś wybrał(a)?",
+        "Gdybyś musiał(a) kogoś zamordować, kto by to był?",
+        "Jaką najgłupszą rzecz zrobiłeś(-łaś) po pijanemu?",
+        "Czy kiedykolwiek zdradziłeś(-łaś) kogoś, z kim byłeś(-łaś) w związku?",
+        "Czy masz jakąś mroczną tajemnicę, której nikt nie zna?",
+        "Czy fantazjowałeś(-łaś) kiedyś o kimś, kto jest teraz w tym pokoju?",
+        "Czy kiedykolwiek zrobiłeś(-łaś) coś, co mogłoby cię zaprowadzić do więzienia?",
+        "Jaką najbardziej obrzydliwą rzecz zjadłeś(-łaś) w życiu?",
+        "Czy kiedykolwiek byłeś(-łaś) zakochany(-a) w nauczycielu?",
+        "Czy kiedykolwiek szantażowałeś(-łaś) kogoś?",
+        "Jakie jest twoje największe seksualne upokorzenie?",
+        "Czy zrobiłeś(-łaś) coś celowo, żeby zniszczyć komuś życie lub reputację?",
+        "Czy oglądałeś(-łaś) kiedyś treści 18+ w miejscu publicznym?",
+        "Czy kiedykolwiek zrobiłeś(-łaś) coś tylko po to, by kogoś zranić?",
+        "Jakie było twoje najdziwniejsze doświadczenie z randką?",
+        "Czy kiedykolwiek całowałeś(-łaś) więcej niż jedną osobę w ciągu jednej nocy?",
+        "Czy masz kogoś, komu życzysz naprawdę źle?",
+        "Czy kiedykolwiek wysłałeś(-łaś) komuś kompromitujące zdjęcia?",
+        "Czy był(a)byś w stanie sprzedać tajemnicę przyjaciela dla pieniędzy?",
+        "Jakie było najdziwniejsze miejsce, w którym się całowałeś(-łaś)?",
+        "Czy wolał(a)byś żyć w więzieniu przez 10 lat czy zdradzić wszystkich swoich przyjaciół?",
+        "Czy miałeś(-łaś) kiedyś myśli, których się wstydzisz?",
+        "Czy kiedykolwiek widziałeś(-łaś) kogoś nago przypadkiem i nie mógł(-mogła) przestać o tym myśleć?",
+        "Jakie jest twoje najciemniejsze pragnienie?",
+        "Czy miałeś(-łaś) kiedyś sen erotyczny o kimś, kto cię brzydzi?",
+        "Co zrobił(a)byś, gdybyś miał(-a) 24 godziny bez żadnych konsekwencji?",
+        "Czy kiedykolwiek byłeś(-łaś) powodem czyjegoś załamania nerwowego?",
+        "Czy wyobrażasz sobie czasem, że twoi znajomi zginęliby i jak byś się wtedy czuł(a)?",
+        "Czy zabił(a)byś kogoś, gdybyś wiedział(-a), że nikt się nie dowie?",
+        "Czy kiedykolwiek rozważałeś(-łaś) porzucenie rodziny?",
+        "Jaką najbardziej żenującą rzecz zrobiłeś(-łaś) dla pieniędzy?",
+        "Czy kiedykolwiek byłeś(-łaś) świadkiem przestępstwa i nic nie zrobiłeś(-łaś)?",
+        "Czy ukradłeś(-łaś) coś od przyjaciela?",
+        "Czy był(a)byś w stanie wejść w związek z kimś tylko dla korzyści materialnych?",
+        "Jakie było twoje największe życiowe kłamstwo?",
+        "Czy miałeś(-łaś) kiedyś ochotę uderzyć dziecko?",
+        "Czy zdarzyło ci się podglądać kogoś w intymnej sytuacji?",
+        "Czy kiedykolwiek wysłałeś(-łaś) anonimowe groźby komuś?",
+        "Co najbardziej obrzydliwego zrobiłeś(-łaś) z ciekawości?",
+        "Czy był(a)byś w stanie zostawić swoją rodzinę dla sławy?",
+        "Z jakiego powodu mógłbyś(-łabyś) kogoś szantażować?",
+        "Czy zdarzyło ci się celowo upić kogoś, żeby mieć nad nim przewagę?",
+        "Jakie jest twoje najmroczniejsze wspomnienie z dzieciństwa?",
+        "Czy kiedykolwiek zrobiłeś(-łaś) coś niemoralnego w pracy?",
+        "Czy kiedykolwiek miałeś(-łaś) romans z zajętą osobą?",
+        "Co zrobił(a)byś, gdybyś był(a) niewidzialny przez cały dzień?",
+        "Jakie było twoje najgorsze upokorzenie związane z nagością?",
+        "Czy miałeś(-łaś) kiedyś tak intensywny wstyd, że chciałeś(-aś) zniknąć z tego świata?",
+        "Czy kiedykolwiek byłeś(-łaś) zazdrosny(-a) do tego stopnia, że zrobiłeś(-łaś) komuś krzywdę?",
+        "Czy był(a)byś w stanie zrezygnować z życia uczciwego, by zostać milionerem?",
+        "Co najgorszego powiedziałeś(-łaś) komuś w złości?",
+        "Czy zdarzyło ci się podmienić coś komuś dla żartu lub zemsty?",
+        "Czy zdarzyło ci się krzyczeć na dziecko w miejscu publicznym?",
+        "Czy kiedykolwiek użyłeś(-łaś) czyjegoś sekretu przeciwko niemu?",
+        "Czy chciał(a)byś, żeby ktoś konkretny zniknął z twojego życia na zawsze?",
+        "Czy zrobiłeś(-łaś) kiedyś coś obrzydliwego w jedzeniu kogoś innego?",
+        "Jakie jest twoje najbardziej chore wyobrażenie erotyczne?",
+        "Czy kiedykolwiek podrobiłeś(-łaś) czyjś podpis lub dokument?",
+        "Jakie było twoje największe wykroczenie prawne?",
+        "Czy kiedykolwiek specjalnie wywołałeś(-łaś) kłótnię, żeby coś ukryć?",
+        "Czy oszukałeś(-łaś) kiedyś w bardzo ważnej sprawie?",
+        "Czy zrobił(a)byś coś seksualnego dla ogromnej sumy pieniędzy?",
+        "Czy masz na sumieniu coś, czego nikomu nigdy nie wyznałeś(-łaś)?",
+        "Czy miałeś(-łaś) kiedykolwiek ochotę zniszczyć komuś związek?",
+        "Czy był(a)byś w stanie udawać miłość przez lata dla własnych korzyści?",
+        "Czy kiedykolwiek próbowałeś(-łaś) hipnotyzować kogoś albo manipulować emocjonalnie?",
+        "Jakie jest twoje najbardziej obrzydliwe przyzwyczajenie?",
+        "Czy próbowałeś(-łaś) kiedyś celowo wzbudzić zazdrość w byłym/obecnym partnerze?",
+        "Czy był(a)byś zdolny(-a) do zdrady tylko po to, by się zemścić?",
+        "Czy zdarzyło ci się upić kogoś, żeby zdobyć przewagę?",
+        "Co byś zrobił(-a), gdybyś miał(-a) dostęp do wszystkich cudzych sekretów?",
+        "Czy kiedykolwiek szukałeś(-łaś) informacji o kimś, żeby go potem szantażować?",
+        "Czy był(a)byś zdolny(-a) do okłamania kogoś bliskiego w bardzo ważnej sprawie?",
+        "Czy miałeś(-łaś) kiedyś obsesję na punkcie kogoś?",
+        "Czy był(a)byś gotów(-owa) zamienić życie jednej osoby na swoje szczęście?",
+        "Czy kiedykolwiek wykorzystywałeś(-łaś) czyjeś zaufanie tylko po to, by coś osiągnąć?",
+        "Czy miałeś(-łaś) kiedyś ochotę celowo kogoś upokorzyć publicznie?",
+        "Czy kiedykolwiek próbowałeś(-łaś) kogoś uwieść tylko dla zabawy?",
+        "Czy jesteś w stanie wyobrazić sobie siebie jako kogoś złego i ci się to podoba?",
+        "Czy masz jakąś część siebie, której się wstydzisz nawet przed sobą samym(-ą)?",
+        "Czy kiedykolwiek spowodowałeś(-łaś) czyjeś cierpienie i byłeś(-łaś) z tego zadowolony(-a)?",
+        "Czy był(a)byś w stanie wydać przyjaciela, by uniknąć własnej kary?",
+        "Czy celowo okłamałeś(-łaś) kogoś chorego lub w trudnej sytuacji?",
+        "Czy był(a)byś gotów(-owa) zdradzić przyjaciela dla własnego awansu?",
+        "Czy kiedykolwiek byłeś(-łaś) powodem czyjejś traumy?",
+        "Czy próbowałeś(-łaś) kiedyś zniszczyć komuś opinię w oczach innych?",
+        "Czy kiedykolwiek miałeś(-łaś) do czynienia z czymś paranormalnym i to cię przeraziło?",
+        "Czy był(a)byś gotów(-owa) zdradzić wszystko, co wiesz, dla własnej korzyści?",
+        "Czy masz na sumieniu jakąś zbrodnię emocjonalną wobec kogoś?",
+        "Czy zrobił(a)byś coś nielegalnego, jeśli nikt by się nie dowiedział?",
+        "Czy kiedykolwiek zniszczyłeś(-łaś) dowody własnego przewinienia?",
+        "Czy był(a)byś w stanie żyć z kłamstwem przez całe życie?",
+        "Czy miałeś(-łaś) kiedyś potrzebę fizycznego skrzywdzenia kogoś?",
+        "Czy masz w głowie jakieś myśli, których boisz się wypowiedzieć na głos?",
+        "Czy był(a)byś gotów(-owa) zostawić wszystko i wszystkich dla lepszego życia?",
+        "Czy cieszył(a)byś się z porażki bliskiej ci osoby?",
+        "Czy potrafił(a)byś udawać uczucia, których nie masz przez bardzo długi czas?",
+        "Czy zdarzyło ci się planować zemstę przez długi czas?",
+        "Czy był(a)byś zdolny(-a) do ukrywania ciała po zbrodni?",
+        "Czy zrobił(a)byś coś seksualnego przed kamerą za duże pieniądze?",
+        "Czy był(a)byś w stanie oddać cudze sekrety mediom za milion?",
+        "Czy kiedykolwiek fantazjowałeś(-łaś) o władzy nad czyimś życiem?",
+        "Czy był(a)byś w stanie zmanipulować grupę ludzi dla własnego zysku?",
+        "Czy miałeś(-łaś) kiedyś pokusę zostania przestępcą?",
+        "Czy był(a)byś w stanie poświęcić jedną osobę, by ocalić siebie?",
+        "Czy próbowałeś(-łaś) kiedyś zniszczyć relację kogoś innego?",
+        "Czy zrobił(a)byś coś naprawdę obrzydliwego za ogromną fortunę?",
+        "Czy kiedykolwiek byłeś(-łaś) szczęśliwy(-a), że ktoś cierpi?",
+        "Czy był(a)byś gotów(-owa) zaryzykować życie innych dla sławy?",
+        "Czy masz w sobie coś, co uważasz za niebezpieczne dla innych?",
+        "Czy był(a)byś w stanie zdradzić cały kraj dla pieniędzy?",
+        "Czy był(a)byś gotów(-owa) żyć pod fałszywą tożsamością?",
+        "Czy kiedykolwiek życzyłeś(-łaś) komuś śmierci z całego serca?",
+        "Czy był(a)byś zdolny(-a) do zniszczenia cudzej kariery przez zazdrość?",
+        "Czy był(a)byś gotów(-owa) zakończyć przyjaźń, by uratować reputację?",
+        "Czy zrobił(a)byś coś niemoralnego, jeśli nikt nie patrzy?",
+        "Czy był(a)byś w stanie wyciągnąć z kogoś tajemnicę za pomocą kłamstw i manipulacji?",
+        "Czy był(a)byś gotów(-owa) zmusić kogoś do czegoś, czego nie chce?",
+        "Czy był(a)byś w stanie przeżyć z poczuciem winy po wyrządzeniu krzywdy?",
+        "Czy miałeś(-łaś) kiedyś moment, w którym czułeś(-łaś), że jesteś zdolny(-a) do wszystkiego, nawet zła?",
       ];
-
       const challenges = [
-        "Zrób 10 przysiadów wraz z osobą po twojej lewej.",
-        "Przez 30 sekund mów jak osoba mocno zmęczona.",
-        "Narysuj na kartce swoje ulubione zwierzę.",
-        "Zaśpiewaj refren piosenki w języku, którego się uczysz.",
-        "Zrób 15 pompek przy ścianie.",
-        "Przez 30 sekund naśladuj dźwięki dżungli.",
-        "Zrób sobie fryzurę rękami.",
-        "Przez 1 minutę mów jak komentator sportowy.",
-        "Zrób „jaskółkę” i utrzymaj się 10 sekund.",
-        "Przez 30 sekund naśladuj chód wybranej osoby.",
-        "Narysuj portret kogoś, mając zamknięte oczy.",
-        "Zrób 10 skłonów w przód.",
-        "Przez 1 minutę mów jak osoba starsza.",
-        "Zaśpiewaj piosenkę w języku wymyślonym.",
-        "Zrób mostek i utrzymaj 5 sekund.",
-        "Przez 30 sekund mów jak szeryf na Dzikim Zachodzie.",
-        "Narysuj swoje ulubione danie.",
-        "Zrób 20 przysiadów sumo.",
-        "Przez 30 sekund mów jak osoba z innej planety.",
-        "Zaśpiewaj piosenkę używając tylko „la-la-la”.",
-        "Zrób szpagat albo próbę szpagatu.",
-        "Przez 1 minutę mów jak nauczyciel w szkole.",
-        "Narysuj wymyśloną postać z gry czy filmu.",
-        "Zrób 10 wymachów nogami do tyłu.",
-        "Przez 30 sekund mów szeptem.",
-        "Zaśpiewaj piosenkę o swoim pokoju.",
-        "Zrób sobie „makijaż” używając tylko palców.",
-        "Przez 30 sekund mów jak osoba wściekła.",
-        "Narysuj swoje wymarzone wakacje.",
-        "Zrób 10 pompek na kolanach.",
-        "Przez 30 sekund mów jak osoba mocno zdezorientowana.",
-        "Zaśpiewaj piosenkę w języku zwierząt (np. „miau”)!",
-        "Zrób przysiad, wyskok i klaśnij.",
-        "Przez 30 sekund mów jak osoba rozmarzona.",
-        "Narysuj wymyśloną wersję siebie w przyszłości.",
-        "Zrób 10 wykroków na każdą nogę.",
-        "Przez 30 sekund mów jak osoba znudzona.",
-        "Zaśpiewaj piosenkę tak, jakby była kołysanką.",
-        "Zrób 5 pompek a osoba na przeciwko ciebie trzyma ci nogi w powietrzu.",
-        "Przez 30 sekund mów jak osoba podekscytowana.",
-        "Narysuj logo firmy.",
-        "Zrób 10 brzuszków.",
-        "Przez 30 sekund mów jak osoba zawstydzona.",
-        "Zaśpiewaj piosenkę w wersji country.",
-        "Zrób 10 przysiadów, trzymając się kogoś za ręce.",
-        "Przez 30 sekund mów jak osoba w szoku.",
-        "Narysuj siebie w stroju superbohatera.",
-        "Zrób 10 wymachów rękami w górę i w dół.",
-        "Zaśpiewaj piosenkę o swoim ulubionym kolorze.",
-        "Zrób 20 przysiadów.",
-        "Narysuj karykaturę osoby po prawej stronie.",
-        "Zaśpiewaj piosenkę o sobie.",
-        "Stań na rękach (przy ścianie) na 10 sekund.",
-        "Opowiedz żart, którym rozśmieszysz wszystkich.",
-        "Zaśpiewaj ulubiony refren, szepcząc.",
-        "Przez 30 sekund mów samymi samogłoskami.",
-        "Narysuj portret osoby po lewej.",
-        "Przez 1 minutę mów używając tylko rymów.",
-        "Zrób sobie wąsy z kartki.",
-        "Zaśpiewaj piosenkę dziecięcym głosem.",
-        "Stań tyłem do grupy i spróbuj rozpoznać osoby po głosie. | W razie niezgadnięcia pijesz shota",
-        "Napisz w powietrzu swoje imię biodrami.",
-        "Zrób 10 przysiadów z osobą na plecach (Można sobie wybrać).",
-        "Powiedz językołamacz 5 razy szybko.",
-        "Narysuj na kartce rzecz, o jakiej pomyślisz w 5 sekund.",
-        "Skacz na jednej nodze 30 razy.",
-        "Zrób sobie „selfie” ze smutną miną.",
-        "Przez 30 sekund mów tylko szeptem.",
-        "Uśmiechnij się najszerzej jak potrafisz.",
-        "Zrób „żółwika” (żółw z rąk) z osobą obok.",
-        "Zrób 5 przysiadów… tyłem!",
-        "Napisz swoje imię od tyłu.",
-        "Przez 1 minutę zachowuj się jak gej.",
-        "Przez 30 sekund naśladuj ruchy kogoś z grupy.",
-        "Zaśpiewaj piosenkę w języku, którym się nie posługujesz.",
-        "Narysuj wymyśloną mapę skarbów.",
-        "Naśladuj swojego ulubionego superbohatera.",
-        "Przez 30 sekund mów tylko używając litery „p”.",
-        "Stań na jednej nodze, zamknij oczy i policz do 10.",
-        "Zaśpiewaj piosenkę dziecięcą w wersji heavy metal.",
-        "Zrób 10 brzuszków.",
-        "Narysuj na kartce karykaturę kogoś z pokoju.",
-        "Zrób sobie „koronę” z papieru.",
-        "Zrób 1 przysiadów na jednej nodze.",
-        "Zaśpiewaj piosenkę o warzywach.",
-        "Przez 30 sekund mów jak szpieg.",
-        "Zrób przewrót w przód.",
-        "Narysuj w 30 sekund portret osoby po prawej.",
-        "Przez 1 minutę mów tylko używając słów na „s”.",
-        "Zrób 20 wymachów rękami.",
-        "Zaśpiewaj piosenkę… od tyłu!",
-        "Zrób 20 pajacyków bez przerwy.",
-        "Opowiedz krótką, zabawną historię z życia.",
-        "Zaśpiewaj piosenkę z reklamy.",
-        "Naśladuj przez minutę zwierzę wybrane przez grupę.",
-        "Napisz i wyrecytuj krótkie wierszyki o osobie po lewej.",
-        "Zrób śmieszną minę i utrzymaj ją przez 1 minuty.",
-        "Przez minutę mów jak postać z bajki.",
-        "Wstań i wykonaj taniec robotów przez 1 minutę.",
-        "Wypij łyk wody z kubka bez używania rąk.",
-        "Zaśpiewaj fragment piosenki wybranej przez grupę.",
-        "Wykonaj 15 skoków w miejscu.",
-        "Zaśpiewaj jak najgłośniej refren ulubionej piosenki.",
-        "Naśladuj dźwięk zwierzęcia przez 30 sekund.",
-        "Zrób 20 sekund przerwy i medytuj z zamkniętymi oczami.",
-        "Wstań i zrób zabawny taniec przez 30 sekund.",
-        "Zaśpiewaj fragment piosenki w obcym języku.",
-        "Zrób 10 pompek z klaśnięciem.",
-        "Napisz krótkie „przeprosiny” do osoby wybranej przez grupę.",
-        "Zrób minę zdziwioną i utrzymaj ją przez minutę.",
-        "Zaśpiewaj „Sto lat” z pełnym zaangażowaniem.",
-        "Wykonaj 5 skłonów do ziemi.",
-        "Narysuj swoją wymarzoną wakacyjną destynację i pokaż grupie.",
-        "Wstań i podskocz 20 razy.",
-        "Powiedz głośno swoje ulubione powiedzenie.",
-        "Zrób 1 minutową przerwę na śmianie się – śmiej się bez powodu!",
-        "Zaśpiewaj piosenkę z filmu Disney’a.",
-        "Naśladuj kogoś z grupy przez minutę.",
-        "Zrób minę złości i utrzymaj ją przez 30 sekund.",
-        "Wstań i zatańcz „macarenę” przez minutę.",
-        "Napisz krótki list miłosny do wybranej osoby przez grupę.",
-        "Zaśpiewaj na głos ulubioną piosenkę z dzieciństwa.",
-        "Zrób 10 skoków z przysiadu.",
-        "Narysuj na kartce swoją ulubioną postać z bajki.",
-        "Zrób 20 sekundowy taniec „freestyle”.",
+        "Poliż klamkę.",
+        "Zaproś na randkę osobę, którą wyznaczy osoba po twojej prawej.",
+        "Wybierz jedną osobę i wąchaj jej stopy przez 10 sekund.",
+        "Zamknij oczy. Grupa włoży ci coś jadalnego do buzi, a ty to połknij.",
+        "Wyślij SMS-a o treści: „Jaki masz problem?” do ostatniego numeru.",
+        "Wybierz jedną osobę, która narysuje ci tatuaż na pośladku.",
+        "Załóż wszystkie swoje ubrania na lewą stronę.",
+        "Wyjdź na zewnątrz i przytul pierwszą osobę, którą zobaczysz.",
+        "Pozwól osobie na przeciwko przejrzeć wszystkie zdjęcia na twoim telefonie.",
+        "Zatańcz z osobą po twojej lewej do piosenki wybranej przez innych.",
+        "Zachowuj się jak pies i zaaportuj trzy razy.",
+        "Wypij miksturę stworzoną przez innych z co najmniej 5 składników.",
+        "Zadzwoń do losowej osoby z kontaktów i zaśpiewaj jej sto lat.",
+        "Ugryź osobę po twojej lewej w ramię.",
+        "Zdejmij jeden element garderoby na 1 minutę.",
+        "Przeczołgaj się przez pokój, warcząc jak wściekły pies.",
+        "Powiedz komuś, że go kochasz i pocałuj w policzek.",
+        "Zamień się ubraniami z osobą po twojej prawej stronie na 2 minuty.",
+        "Obliż podeszwę swojego buta.",
+        "Zaśpiewaj hymn narodowy.",
+        "Przytul klozet i powiedz mu, że jest twoim najlepszym przyjacielem.",
+        "Zadzwoń do byłego/byłej i zapytaj, czy nadal o tobie myśli.",
+        "Wypij szklankę wody z solą.",
+        "Powąchaj każdą osobę w pokoju i powiedz, kto pachnie najlepiej.",
+        "Zatańcz jak w klubie striptease (ubrany).",
+        "Zrób 10 pompek, szczekając przy każdej jak pies.",
+        "Zrób zdjęcie swojej miny jak po orgazmie i wyślij losowej osobie z kontaktów.",
+        "Zadzwoń do restauracji i zapytaj, czy dostarczają pizzę na Księżyc.",
+        "Zjedz łyżeczkę musztardy.",
+        "Pozwól innym domalować ci wąsy i brwi markerem.",
+        "Włóż sobie lód za koszulkę i poczekaj, aż się rozpuści.",
+        "Zrób sobie selfie z najdziwniejszą miną i wrzuć na swoje story z napisem 'tak właśnie wygląda życie'.",
+        "Wylosuj osobę, która wsypie ci do spodni garść mąki.",
+        "Chodź tyłem przez kolejne 10 minut.",
+        "Zjedz plasterek cytryny jakby to było najpyszniejsze ciasto na świecie.",
+        "Udawaj przez 1 minuty, że jesteś zakochanym kociakiem.",
+        "Zadzwoń do swojej mamy/taty i powiedz, że chcesz zostać zakonnicą/mnichem.",
+        "Zaproponuj komuś masaż stóp i zrób to przez minutę.",
+        "Zatańcz erotycznie do piosenki wybranej przez grupę.",
+        "Przeczytaj na głos 5 ostatnich wiadomości z Messengera/SMS-ów.",
+        "Zrób komuś masaż głowy, używając tylko swoich stóp.",
+        "Wylosuj kogoś i pozwól mu cię spoliczkować.",
+        "Zdejmij skarpetkę ustami z osoby po twojej lewej.",
+        "Zjedz coś bez użycia rąk jak pies.",
+        "Udawaj, że jesteś toaletą i ktoś ma cię spłukać.",
+        "Zaśpiewaj serenadę do czyjegoś pępka.",
+        "Wstań i powiedz coś bardzo intymnego, patrząc każdemu w oczy.",
+        "Załóż na głowę bieliznę (czystą) i zrób 10 przysiadów.",
+        "Przeczytaj na głos swój ostatni wpis z wyszukiwarki Google.",
+        "Udawaj przez minutę, że jesteś pijanym celebrytą na czerwonym dywanie.",
+        "Obliż łokieć osobie, którą wybierze grupa.",
+        "Wylosuj osobę, która pstryknie cię w czoło 10 razy.",
+        "Zaśpiewaj popularną piosenkę, zmieniając jej słowa na temat kiszonej kapusty.",
+        "Przytul miskę ziemniaków i wyznaj jej miłość.",
+        "Pozwól komuś narysować ci na brzuchu emotkę markerem.",
+        "Załóż ubrania jednej osoby z pokoju – na siebie, jedno na drugie.",
+        "Udawaj przez minutę, że jesteś zakochany w swoim bucie.",
+        "Wylosuj osobę i pozwól jej zrobić ci fryzurę z dostępnych przedmiotów.",
+        "Zatańcz balet na środku pokoju przez 1 minutę.",
+        "Wylosuj osobę, której pozwolisz cię nakarmić – ale z zawiązanymi oczami.",
+        "Wyjdź na zewnątrz i krzyknij: „Kocham życie i kiszoną kapustę!”",
+        "Wypij szklankę mleka zmieszaną z ketchupem.",
+        "Zadzwoń do losowego numeru i poproś o poradę sercową.",
+        "Zagraj scenę łóżkową z wybranym rekwizytem i powagą aktora.",
+        "Zrób 5 pajacyków i przy każdym krzycz inne przekleństwo w wymyślonym języku.",
+        "Pozwól innym zrobić ci makijaż z zamkniętymi oczami.",
+        "Zaproś kogoś z pokoju do tańca godowego wymyślonego przez siebie.",
+        "Wyznaj coś osobie, której najbardziej nie znosisz (nawet udawaną rzecz).",
+        "Zrób 10 kroków w ręczniku udając modela na pokazie mody.",
+        "Poproś kogoś, żeby cię klepnął w tyłek.",
+        "Zaśpiewaj dowolny hymn państwowy jakbyś był dinozaurem.",
+        "Wypij koktajl przygotowany przez grupę z trzech składników wybranych losowo.",
+        "Poproś osobę po lewej, żeby cię uczesała z zamkniętymi oczami.",
+        "Zrób zdjęcie swojej stopy i wrzuć na Instastory z napisem 'moja miłość 🦶'.",
+        "Zamień się miejscami z osobą siedzącą najdalej i przytul ją na powitanie.",
+        "Zaśpiewaj fragment opery z pełnym dramatyzmem.",
+        "Zatańcz lambadę z osobą, którą wylosuje grupa.",
+        "Udawaj, że masz związek z krzesłem i powiedz mu, że cię zawiodło.",
+        "Zadzwoń do losowego numeru i zapytaj, czy są zadowoleni z pralki.",
+        "Zaproponuj komuś taniec erotyczny.",
+        "Zjedz łyżkę masła lub margaryny.",
+        "Zrób pokaz jogi wymyślonej przez siebie.",
+        "Zrób komuś masaż pleców za pomocą banana.",
+        "Zagraj w jedzenie chipsów jakby to była romantyczna scena z filmu.",
+        "Zaproponuj komuś oświadczyny na kolanach.",
+        "Wyjdź na balkon lub okno i krzyknij: „Potrzebuję miłości i pierogów!”",
+        "Zaśpiewaj piosenkę z dzieciństwa jakbyś był supergwiazdą.",
+        "Wylosuj osobę, która ci zrobi nowy wizerunek.",
+        "Zatańcz breakdance, nawet jeśli nie umiesz.",
+        "Pozwól komuś przykleić ci coś na twarz taśmą.",
+        "Przytul każdą osobę w pokoju i powiedz, co w niej kochasz.",
+        "Zrób selfie z miną 'na ból brzucha' i ustaw jako profilowe (przynajmniej na 10 minut).",
+        "Udawaj przez minutę, że jesteś łabędziem podczas zalotów.",
+        "Zrób striptease rękami.",
+        "Poproś osobę po twojej prawej o lekcję uwodzenia i odegraj ją publicznie.",
+        "Wymyśl piosenkę o brudnych skarpetach i zaśpiewaj ją z pełnym uczuciem.",
+        "Załóż dwa kapelusze (lub coś, co może być kapeluszem) i zrób pokaz mody.",
+        "Zrób pompkę na osobie po twojej lewej stronie.",
+        "Poproś, żeby ktoś zrobił ci zdjęcie jak pozujesz jak grecki bóg.",
+        "Załóż na siebie tyle ubrań, ile się zmieści i zrób pokaz mody.",
+        "Przez 5 minut mów tylko w języku wymyślonym przez siebie.",
+        "Przebiegnij się wokół domu/po pokoju, krzycząc 'Jestem królem bananów!'",
+        "Wymień trzy swoje kompleksy – głośno i dumnie.",
+        "Zatańcz slow dance z osobą, której nigdy byś nie zaprosił(-a).",
+        "Zadzwoń do byłej/byłego i powiedz, że nadal masz jego/jej skarpetki.",
+        "Zrób komuś śniadanie z losowych rzeczy znalezionych w kuchni.",
+        "Wymyśl hasło wyborcze i przez 2 minuty prowadź kampanię.",
+        "Załóż okulary przeciwsłoneczne i udawaj celebrytę podczas wywiadu.",
+        "Zaproponuj osobie po twojej lewej wspólne mieszkanie i przekonuj ją przez minutę.",
+        "Zrób minę, jakbyś właśnie odkrył najgorszą tajemnicę świata i nie mógł o niej mówić.",
+        "Obliż kubek lub szklankę osoby po prawej stronie.",
+        "Ugryź kawałek surowej cebuli i uśmiechnij się jakbyś był w reklamie.",
+        "Zaproś do tańca dowolny przedmiot i nazwij go swoją randką.",
+        "Zaśpiewaj popularną piosenkę do melodii innej popularnej piosenki.",
+        "Zrób głosową relację z toalety jakbyś był w horrorze.",
+        "Wypij coś bardzo słodkiego i powiedz, że to napój wojownika.",
+        "Zrób pokaz mody tylko z przedmiotów z łazienki.",
+        "Pozwól, żeby ktoś zadzwonił z twojego telefonu do losowej osoby i wypytał o pogodę.",
+        "Udawaj przez 2 minuty, że jesteś postacią z kreskówki wybraną przez innych.",
+        "Zaproponuj osobie po twojej lewej ślub – i odegrajcie zaręczyny.",
+        "Udawaj, że masz własny talk-show i przez minutę przeprowadź wywiad z butem.",
+        "Zamień się językiem z inną osobą – mówcie swoim głosem, ale słowami drugiej osoby.",
+        "Zaproś kogoś na randkę jakbyś był robotem pozbawionym emocji.",
+        "Zaśpiewaj piosenkę do warzywa i powiedz mu, że zawsze cię inspirowało.",
       ];
 
-      const penalties = [
-        "Zjedz kawałek cytryny!",
-        "Zrób 20 pompek!",
-        "Umyj wszystkie szklanki!",
-        "Posprzątaj pokój w 5 minut!",
-      ];
-
-      // Funkcja losująca, która unika powtórzeń
-      function getRandom(arr, last) {
-        if (arr.length <= 1) return arr[0];
-        let item;
-        do {
-          item = arr[Math.floor(Math.random() * arr.length)];
-        } while (item === last);
-        return item;
-      }
-
-      // Funkcja losująca osobę
-      function getRandomPlayer() {
-        const players = document.getElementById("players").value.split(",");
-        const cleaned = players
-          .map((el) => el.trim())
-          .filter((el) => el.length > 0);
-        if (cleaned.length > 0) {
-          return getRandom(cleaned, lastPlayer);
-        }
-        return "Nie podano graczy.";
-      }
-
+      let players = [];
+      let scores = {};
+      let currentPlayer = null;
+      let currentAction = null;
       let lastQuestion = null;
       let lastChallenge = null;
-      let lastPenalty = null;
-      let lastPlayer = null;
 
-      document.getElementById("prawdaBtn").addEventListener("click", () => {
-        const question = getRandom(questions, lastQuestion);
-        lastQuestion = question;
+      function updatePlayers() {
+        players = document
+          .getElementById("players")
+          .value.split(" ")
+          .map((p) => p.trim())
+          .filter((p) => p);
+        players.forEach((p) => {
+          if (!(p in scores)) scores[p] = 0;
+        });
+      }
 
-        const penalty = getRandom(penalties, lastPenalty);
-        lastPenalty = penalty;
+      function drawPlayer() {
+        updatePlayers();
+        if (players.length === 0) return alert("Podaj graczy!");
 
-        const player = getRandomPlayer();
+        // Sprawdzenie czy ktos wygrał i kto ma najmniej punktów
+        let winner = null;
+        let minScore = Infinity;
+        let minPlayer = null;
 
-        lastPlayer = player;
+        for (const [name, pts] of Object.entries(scores)) {
+          if (pts >= 120) {
+            winner = name;
+          }
+          if (pts < minScore) {
+            minScore = pts;
+            minPlayer = name;
+          }
+        }
 
-        document.getElementById("question").innerHTML = `
-                    <strong>Prawda</strong> (dla: ${player}): ${question} <br>
-                    <em>Kara za nieodpowiedzenie to:</em> ${penalty}
-                `;
+        if (winner) {
+          alert(
+            `${winner} wygrywa grę!\nGracz z najmniejszą liczbą punktów to: ${minPlayer}`
+          );
+          return;
+        }
+
+        currentPlayer = players[Math.floor(Math.random() * players.length)];
+        document.getElementById(
+          "question"
+        ).innerHTML = `<strong>Wybrana osoba:</strong> ${currentPlayer}`;
         document.getElementById("question").style.display = "block";
-      });
+        currentAction = null;
+      }
 
-      document.getElementById("wyzwanieBtn").addEventListener("click", () => {
-        const challenge = getRandom(challenges, lastChallenge);
-        lastChallenge = challenge;
-
-        const penalty = getRandom(penalties, lastPenalty);
-        lastPenalty = penalty;
-
-        const player = getRandomPlayer();
-
-        lastPlayer = player;
-
-        document.getElementById("question").innerHTML = `
-                    <strong>Wyzwanie</strong> (dla: ${player}): ${challenge} <br>
-                    <em>Kara za niewykonanie wyzwania to:</em> ${penalty}
-                `;
+      function askTruth() {
+        if (!currentPlayer) return alert("Najpierw wylosuj osobę!");
+        let q;
+        do {
+          q = questions[Math.floor(Math.random() * questions.length)];
+        } while (q === lastQuestion);
+        lastQuestion = q;
+        currentAction = "prawda";
+        document.getElementById(
+          "question"
+        ).innerHTML = `<strong>Prawda (${currentPlayer}):</strong> ${q}<br>
+        <button onclick='confirmResult(true)'>Odpowiedział/a</button>
+        <button onclick='confirmResult(false)'>Nie odpowiedział/a</button>`;
         document.getElementById("question").style.display = "block";
-      });
-      let pytania = questions.length;
-      let wyzwania = challenges.length;
+      }
+
+      function askChallenge() {
+        if (!currentPlayer) return alert("Najpierw wylosuj osobę!");
+        let c;
+        do {
+          c = challenges[Math.floor(Math.random() * challenges.length)];
+        } while (c === lastChallenge);
+        lastChallenge = c;
+        currentAction = "wyzwanie";
+        document.getElementById(
+          "question"
+        ).innerHTML = `<strong>Wyzwanie (${currentPlayer}):</strong> ${c}<br>
+        <button onclick='confirmResult(true)'>Wykonał(a)</button>
+        <button onclick='confirmResult(false)'>Nie wykonał(a)</button>`;
+        document.getElementById("question").style.display = "block";
+      }
+
+      function confirmResult(success) {
+        if (!currentPlayer || !currentAction) return;
+        let pts = 0;
+        if (currentAction === "prawda") pts = success ? 20 : -30;
+        if (currentAction === "wyzwanie") pts = success ? 30 : -20;
+        scores[currentPlayer] += pts;
+        document.getElementById("question").innerHTML += `<br><strong>${
+          success ? "Zaliczone" : "Nie zaliczone"
+        } (${pts > 0 ? "+" : ""}${pts} pkt)</strong>`;
+        currentAction = null;
+      }
     </script>
   </body>
 </html>
